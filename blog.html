@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Journal — KHYBER Stores</title>
+  <meta name="description" content="Essays on slow craftsmanship, warm minimalism, raw materials, and curated interiors." />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+</head>
+<body>
+
+  <!-- Sticky Site Header -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" id="brand-logo-link">KHYBER</a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html#catalog" class="nav-link">Collection</a></li>
+          <li><a href="blog.html" class="nav-link active">Journal</a></li>
+          <li><a href="index.html#promise" class="nav-link">Craft Ethos</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="cart-toggle-btn" id="open-cart-btn" data-action="open-cart" aria-label="View shopping bag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span>Bag</span>
+          <span class="cart-count-badge" style="display: none;">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Blog Hero Section -->
+    <section class="blog-hero">
+      <div class="container">
+        <span class="badge badge-accent blog-hero-badge">Editorial Gazette</span>
+        <h1 class="blog-hero-title">The Khyber Journal</h1>
+        <p class="blog-hero-desc">
+          Reflections on generational technique, tactile materiality, and curating tranquil spaces.
+        </p>
+      </div>
+    </section>
+
+    <!-- Featured Post Section -->
+    <section class="featured-story-section">
+      <div class="container" id="featured-post-container">
+        <!-- Injected dynamically via BlogView -->
+      </div>
+    </section>
+
+    <!-- Blog Grid & Categories -->
+    <section class="blog-grid-section">
+      <div class="container">
+        <div class="catalog-filters" id="blog-category-filters" style="margin-bottom: var(--space-8);">
+          <!-- Injected dynamically via BlogView -->
+        </div>
+
+        <div class="blog-grid" id="blog-grid-container">
+          <!-- Injected dynamically via BlogView -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Slide-out Shopping Bag Drawer -->
+  <div class="cart-overlay" id="cart-overlay" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping Bag">
+    <div class="cart-drawer-header">
+      <h3>Your Bag</h3>
+      <button class="cart-drawer-close" id="cart-close-btn" aria-label="Close bag">&times;</button>
+    </div>
+
+    <!-- Free Shipping Progress -->
+    <div class="shipping-meter">
+      <p class="shipping-progress-text" id="shipping-progress-text">
+        Add <strong>$150.00</strong> more for complimentary shipping.
+      </p>
+      <div class="shipping-progress-track">
+        <div class="shipping-progress-fill" id="shipping-progress-bar" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Items List (rendered via CartView) -->
+    <div class="cart-items-container" id="cart-items-container">
+      <!-- Injected by CartView -->
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="cart-drawer-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal</span>
+        <strong id="cart-subtotal">$0.00</strong>
+      </div>
+      <button class="btn btn-primary btn-block" id="cart-checkout-btn" disabled>
+        Proceed to Checkout
+      </button>
+      <p class="text-center text-muted" style="font-size: var(--text-xs); margin-top: var(--space-3);">
+        Taxes and duties calculated at step 2.
+      </p>
+    </div>
+  </aside>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>KHYBER</h4>
+          <p>Curated homeware and tactile daily essentials honoring slow European craftsmanship.</p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <ul class="footer-menu">
+            <li><a href="index.html#catalog">All Collections</a></li>
+            <li><a href="blog.html">Editorial Journal</a></li>
+            <li><a href="index.html#promise">Craft Ethos</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Client Service</h5>
+          <ul class="footer-menu">
+            <li><a href="javascript:void(0)" data-action="open-cart">View Bag</a></li>
+            <li><a href="index.html#promise">Shipping & Returns</a></li>
+            <li><a href="mailto:hello@khyber.store">Contact Studio</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-newsletter">
+          <h5>Studio Dispatch</h5>
+          <p>Quiet notes on seasonal releases and maker studio stories. No spam.</p>
+          <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thank you for subscribing to our studio dispatch.'); this.reset();">
+            <input type="email" placeholder="Your email address" required aria-label="Newsletter email" />
+            <button type="submit" class="btn btn-primary btn-sm">Join</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 Khyber Stores Ltd. All rights reserved.</span>
+        <span>Designed with intention. Handcrafted for longevity.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MVC Architecture (Pure Static Scripts) -->
+  <script src="js/data/posts.js"></script>
+  <script src="js/models/BlogModel.js"></script>
+  <script src="js/models/CartModel.js"></script>
+  <script src="js/views/ToastView.js"></script>
+  <script src="js/views/CartView.js"></script>
+  <script src="js/views/BlogView.js"></script>
+  <script src="js/controllers/CartController.js"></script>
+  <script src="js/controllers/BlogController.js"></script>
+</body>
+</html>
