@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Storefront Homepage -->
+  <url>
+    <loc>https://khyber.store/</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Editorial Journal / Blog -->
+  <url>
+    <loc>https://khyber.store/blog.html</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://khyber.store/assets/images/artisan-craft.jpg</image:loc>
+      <image:title>The Khyber Journal - Slow Craftsmanship &amp; Intentional Living</image:title>
+    </image:image>
+  </url>
+
+  <!-- Product: Aura Sculpted Ceramic Vase -->
+  <url>
+    <loc>https://khyber.store/product.html?id=kh-001</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://khyber.store/assets/images/ceramic-vase.jpg</image:loc>
+      <image:title>Aura Sculpted Ceramic Vase</image:title>
+      <image:caption>Hand-thrown stoneware with undulating organic contours</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product: Atelier Cognac Leather Tote -->
+  <url>
+    <loc>https://khyber.store/product.html?id=kh-002</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://khyber.store/assets/images/leather-tote.jpg</image:loc>
+      <image:title>Atelier Cognac Leather Tote</image:title>
+      <image:caption>Full-grain vegetable-tanned Italian leather tote</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product: Solstice Brushed Brass Lamp -->
+  <url>
+    <loc>https://khyber.store/product.html?id=kh-003</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://khyber.store/assets/images/brass-lamp.jpg</image:loc>
+      <image:title>Solstice Brushed Brass Lamp</image:title>
+      <image:caption>Cordless ambient illumination with 3-step warm dimming</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product: Fjord Waffle Merino Throw -->
+  <url>
+    <loc>https://khyber.store/product.html?id=kh-004</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://khyber.store/assets/images/merino-blanket.jpg</image:loc>
+      <image:title>Fjord Waffle Merino Throw</image:title>
+      <image:caption>Ultra-fine New Zealand merino wool with tactile honeycomb weave</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Product: Ember &amp; Oak Scented Candle -->
+  <url>
+    <loc>https://khyber.store/product.html?id=kh-005</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://khyber.store/assets/images/scented-candle.jpg</image:loc>
+      <image:title>Ember &amp; Oak Scented Candle</image:title>
+      <image:caption>Smoked cedarwood, amber resin, and wild vetiver in amber glass</image:caption>
+    </image:image>
+  </url>
+
+</urlset>
