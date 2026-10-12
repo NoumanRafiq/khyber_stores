@@ -1,6 +1,6 @@
 /**
  * BlogController
- * Controls editorial stories, category filtering, and reader modal.
+ * Controls editorial stories, category filtering, reader modal, and cart/wishlist.
  */
 window.Khyber = window.Khyber || {};
 
@@ -9,6 +9,7 @@ window.Khyber.BlogController = class BlogController {
     this.model = new window.Khyber.BlogModel();
     this.view = new window.Khyber.BlogView();
     this.cartController = new window.Khyber.CartController();
+    this.wishlistController = new window.Khyber.WishlistController(this.cartController);
 
     this.currentCategory = 'All';
 

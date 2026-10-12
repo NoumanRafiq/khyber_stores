@@ -1,6 +1,7 @@
 /**
  * ProductDetailView
- * Controls product detail page layout, gallery thumbnail switches, variants, and quantity.
+ * Controls product detail page layout, gallery thumbnails, variants, quantity stepper,
+ * wishlist toggle, and interactive customer review submissions.
  */
 window.Khyber = window.Khyber || {};
 
@@ -14,9 +15,11 @@ window.Khyber.ProductDetailView = class ProductDetailView {
     this.selectedVariant = null;
     this.currentQuantity = 1;
     this.onAddToCart = null;
+    this.onToggleWishlist = null;
+    this.reviews = [];
   }
 
-  render(product, relatedProducts = []) {
+  render(product, relatedProducts = [], isWishlisted = false) {
     if (!product || !this.mainContainer) return;
 
     // Document Title update
@@ -25,7 +28,7 @@ window.Khyber.ProductDetailView = class ProductDetailView {
     // Breadcrumbs
     if (this.breadcrumbCategory) {
       this.breadcrumbCategory.textContent = product.category;
-      this.breadcrumbCategory.href = `index.html?category=${encodeURIComponent(product.category)}#catalog`;
+      this.breadcrumbCategory.href = `index.html#catalog`;
     }
     if (this.breadcrumbTitle) {
       this.breadcrumbTitle.textContent = product.name;
@@ -34,6 +37,24 @@ window.Khyber.ProductDetailView = class ProductDetailView {
     // Set initial variant
     this.selectedVariant = product.variants?.[0] || null;
     this.currentQuantity = 1;
+
+    // Sample default reviews
+    this.reviews = [
+      {
+        author: "Eleanor Vance",
+        date: "2 weeks ago",
+        rating: 5,
+        title: "Transcendent tactile presence",
+        comment: "The craftsmanship exceeds every expectation. The texture feels organic yet sculptural. Packaged with extraordinary care."
+      },
+      {
+        author: "Julian Chen",
+        date: "1 month ago",
+        rating: 5,
+        title: "A permanent staple in my studio",
+        comment: "Subtle, unpretentious luxury. It catches natural afternoon light in the most tranquil way."
+      }
+    ];
 
     this.mainContainer.innerHTML = `
       <div class="product-gallery">
@@ -92,7 +113,7 @@ window.Khyber.ProductDetailView = class ProductDetailView {
         <!-- Quantity & Add to Cart -->
         <div class="product-action-block">
           <div class="qty-stepper">
-            <button id="qty-decrease" class="qty-btn" aria-label="Decrease quantity">&minus;</button>
+            <button id="qty-decrease" class="qty-btn" aria-label="Decrease quantity" disabled style="opacity: 0.35; cursor: not-allowed;">&minus;</button>
             <input type="number" id="qty-input" class="qty-input" value="1" min="1" max="10" readonly />
             <button id="qty-increase" class="qty-btn" aria-label="Increase quantity">&plus;</button>
           </div>
@@ -104,6 +125,12 @@ window.Khyber.ProductDetailView = class ProductDetailView {
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
             <span id="btn-add-text">Add to Bag &bull; $${product.price.toFixed(2)}</span>
+          </button>
+
+          <button id="btn-detail-wishlist" class="btn btn-secondary btn-icon-round ${isWishlisted ? 'active' : ''}" aria-label="Save to Wishlist">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="${isWishlisted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
           </button>
         </div>
 
@@ -134,7 +161,7 @@ window.Khyber.ProductDetailView = class ProductDetailView {
               <ul class="specs-list">
                 <li><strong>Material:</strong> ${product.details?.material || 'Crafted with premium materials'}</li>
                 <li><strong>Dimensions:</strong> ${product.details?.dimensions || 'Standard dimensions'}</li>
-                <li><strong>Origin:</strong> ${product.details?.origin || 'Ethically made'}</li>
+                <li><strong>Origin:</strong> ${product.details?.origin || 'Ethically made in Europe'}</li>
               </ul>
             </div>
           </details>
@@ -155,7 +182,7 @@ window.Khyber.ProductDetailView = class ProductDetailView {
               <span class="accordion-chevron">↓</span>
             </summary>
             <div class="accordion-body">
-              <p class="specs-text">Complimentary standard shipping on orders over $150. Packaged in 100% recyclable, plastic-free molded paper packaging.</p>
+              <p class="specs-text">Complimentary standard express shipping on orders over $150. Packaged in 100% recyclable, plastic-free molded paper packaging.</p>
             </div>
           </details>
         </div>
@@ -164,6 +191,7 @@ window.Khyber.ProductDetailView = class ProductDetailView {
 
     this.bindDetailEvents(product);
     this.renderRelated(relatedProducts);
+    this.renderReviewsSection(product);
   }
 
   bindDetailEvents(product) {
@@ -176,6 +204,7 @@ window.Khyber.ProductDetailView = class ProductDetailView {
     const qtyInc = document.getElementById('qty-increase');
     const addBtn = document.getElementById('btn-add-to-cart');
     const addText = document.getElementById('btn-add-text');
+    const wishlistBtn = document.getElementById('btn-detail-wishlist');
 
     // Thumbnail swap
     thumbBtns.forEach(btn => {
@@ -202,11 +231,22 @@ window.Khyber.ProductDetailView = class ProductDetailView {
       });
     });
 
-    // Quantity controls
+    // Quantity controls - Strictly minimum 1
     const updateQtyDisplay = () => {
       if (qtyInput) qtyInput.value = this.currentQuantity;
       if (addText) {
         addText.textContent = `Add to Bag • $${(product.price * this.currentQuantity).toFixed(2)}`;
+      }
+      if (qtyDec) {
+        if (this.currentQuantity <= 1) {
+          qtyDec.disabled = true;
+          qtyDec.style.opacity = '0.35';
+          qtyDec.style.cursor = 'not-allowed';
+        } else {
+          qtyDec.disabled = false;
+          qtyDec.style.opacity = '1';
+          qtyDec.style.cursor = 'pointer';
+        }
       }
     };
 
@@ -252,6 +292,159 @@ window.Khyber.ProductDetailView = class ProductDetailView {
         }, 350);
       });
     }
+
+    // Wishlist click
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener('click', () => {
+        if (this.onToggleWishlist) {
+          const isAdded = this.onToggleWishlist(product);
+          wishlistBtn.classList.toggle('active', isAdded);
+          const svg = wishlistBtn.querySelector('svg');
+          if (svg) svg.setAttribute('fill', isAdded ? 'currentColor' : 'none');
+        }
+      });
+    }
+  }
+
+  renderReviewsSection(product) {
+    let reviewsSection = document.getElementById('product-reviews-section');
+    if (!reviewsSection) {
+      reviewsSection = document.createElement('section');
+      reviewsSection.id = 'product-reviews-section';
+      reviewsSection.className = 'product-reviews-section container';
+      this.mainContainer.parentNode.insertBefore(reviewsSection, this.relatedContainer.closest('.related-section'));
+    }
+
+    reviewsSection.innerHTML = `
+      <div class="reviews-header-block">
+        <div>
+          <h3>Client Perspectives</h3>
+          <p class="text-muted">Unfiltered impressions on material honesty and enduring form.</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btn-open-review-modal">Write an Impression</button>
+      </div>
+
+      <div class="reviews-grid" id="reviews-list-container">
+        ${this.reviews.map(r => `
+          <div class="review-card">
+            <div class="review-stars">${'★'.repeat(r.rating)}</div>
+            <h4 class="review-title">${r.title}</h4>
+            <p class="review-text">"${r.comment}"</p>
+            <div class="review-author-meta">
+              <strong>${r.author}</strong>
+              <span>&bull;</span>
+              <span>${r.date}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    const openBtn = reviewsSection.querySelector('#btn-open-review-modal');
+    if (openBtn) {
+      openBtn.addEventListener('click', () => this.showReviewModal(product));
+    }
+  }
+
+  showReviewModal(product) {
+    let modal = document.getElementById('review-form-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'review-form-modal';
+      modal.className = 'checkout-modal-overlay';
+      document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+      <div class="checkout-modal-card">
+        <button class="checkout-modal-close" id="rfm-close-btn">&times;</button>
+        <div class="checkout-header">
+          <span class="badge badge-accent">Community Chronicle</span>
+          <h3>Share Your Experience</h3>
+          <p>${product.name}</p>
+        </div>
+
+        <form id="review-submit-form" class="checkout-form">
+          <div class="form-group">
+            <label>Rating</label>
+            <div class="star-rating-picker" id="star-picker">
+              <span class="star-pick active" data-rating="1">★</span>
+              <span class="star-pick active" data-rating="2">★</span>
+              <span class="star-pick active" data-rating="3">★</span>
+              <span class="star-pick active" data-rating="4">★</span>
+              <span class="star-pick active" data-rating="5">★</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rf-name">Your Name</label>
+            <input type="text" id="rf-name" class="form-control" placeholder="e.g. Maya Lin" required />
+          </div>
+
+          <div class="form-group">
+            <label for="rf-headline">Headline</label>
+            <input type="text" id="rf-headline" class="form-control" placeholder="e.g. Sculptural perfection" required />
+          </div>
+
+          <div class="form-group">
+            <label for="rf-comment">Impression & Comments</label>
+            <textarea id="rf-comment" class="form-control" rows="3" placeholder="Tell us how the material feels and looks in your space..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Publish Impression</button>
+        </form>
+      </div>
+    `;
+
+    modal.classList.add('is-open');
+    document.body.classList.add('modal-open');
+
+    let currentPickRating = 5;
+    const stars = modal.querySelectorAll('.star-pick');
+    stars.forEach(s => {
+      s.addEventListener('click', () => {
+        currentPickRating = parseInt(s.dataset.rating, 10);
+        stars.forEach(st => {
+          st.classList.toggle('active', parseInt(st.dataset.rating, 10) <= currentPickRating);
+        });
+      });
+    });
+
+    const closeModal = () => {
+      modal.classList.remove('is-open');
+      document.body.classList.remove('modal-open');
+    };
+
+    modal.querySelector('#rfm-close-btn').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    modal.querySelector('#review-submit-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const author = modal.querySelector('#rf-name').value;
+      const title = modal.querySelector('#rf-headline').value;
+      const comment = modal.querySelector('#rf-comment').value;
+
+      this.reviews.unshift({
+        author,
+        date: "Just now",
+        rating: currentPickRating,
+        title,
+        comment
+      });
+
+      closeModal();
+      this.renderReviewsSection(product);
+
+      if (window.Khyber.ToastView) {
+        new window.Khyber.ToastView().show({
+          title: "Impression Published",
+          message: "Thank you for contributing to our community chronicle.",
+          type: "success"
+        });
+      }
+    });
   }
 
   renderRelated(relatedProducts) {

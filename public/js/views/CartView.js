@@ -1,6 +1,6 @@
 /**
  * CartView
- * Controls slide-out drawer, cart count badges, and checkout trigger.
+ * Controls slide-out drawer, cart count badges, checkout trigger, and top-right success popup.
  */
 window.Khyber = window.Khyber || {};
 
@@ -11,8 +11,6 @@ window.Khyber.CartView = class CartView {
     this.badgeElements = document.querySelectorAll('.cart-count-badge');
     this.itemsContainer = document.getElementById('cart-items-container');
     this.subtotalElement = document.getElementById('cart-subtotal');
-    this.shippingProgress = document.getElementById('shipping-progress-bar');
-    this.shippingText = document.getElementById('shipping-progress-text');
     this.checkoutBtn = document.getElementById('cart-checkout-btn');
     this.closeBtn = document.getElementById('cart-close-btn');
 
@@ -75,23 +73,13 @@ window.Khyber.CartView = class CartView {
   }
 
   render(state) {
-    const { items, count, formattedSubtotal, isFreeShippingEligible, freeShippingProgress, formattedRemaining } = state;
+    const { items, count, formattedSubtotal } = state;
 
     // Update count badges
     this.badgeElements.forEach(el => {
       el.textContent = count;
       el.style.display = count > 0 ? 'inline-flex' : 'none';
     });
-
-    // Update Shipping Bar
-    if (this.shippingProgress && this.shippingText) {
-      this.shippingProgress.style.width = `${freeShippingProgress}%`;
-      if (isFreeShippingEligible) {
-        this.shippingText.innerHTML = `🎉 <strong>Complimentary Shipping unlocked!</strong>`;
-      } else {
-        this.shippingText.innerHTML = `Add <strong>${formattedRemaining}</strong> more for complimentary shipping.`;
-      }
-    }
 
     // Update Subtotal
     if (this.subtotalElement) {
@@ -139,7 +127,13 @@ window.Khyber.CartView = class CartView {
           <div class="cart-item-variant">${item.variant}</div>
           <div class="cart-item-footer">
             <div class="cart-qty-control">
-              <button class="cart-qty-btn" data-action="decrease" aria-label="Decrease quantity">&minus;</button>
+              <button 
+                class="cart-qty-btn" 
+                data-action="decrease" 
+                aria-label="Decrease quantity"
+                ${item.quantity <= 1 ? 'disabled style="opacity: 0.35; cursor: not-allowed;"' : ''}>
+                &minus;
+              </button>
               <span class="cart-qty-val">${item.quantity}</span>
               <button class="cart-qty-btn" data-action="increase" aria-label="Increase quantity">&plus;</button>
             </div>
@@ -159,13 +153,24 @@ window.Khyber.CartView = class CartView {
         if (this.onRemoveItem) this.onRemoveItem(id, variant);
       });
 
-      card.querySelector('[data-action="decrease"]').addEventListener('click', () => {
-        if (this.onUpdateQuantity) this.onUpdateQuantity(id, variant, currentQty - 1);
-      });
+      // Quantity cannot be less than 1
+      const decBtn = card.querySelector('[data-action="decrease"]');
+      if (decBtn) {
+        decBtn.addEventListener('click', () => {
+          if (currentQty > 1 && this.onUpdateQuantity) {
+            this.onUpdateQuantity(id, variant, currentQty - 1);
+          }
+        });
+      }
 
-      card.querySelector('[data-action="increase"]').addEventListener('click', () => {
-        if (this.onUpdateQuantity) this.onUpdateQuantity(id, variant, currentQty + 1);
-      });
+      const incBtn = card.querySelector('[data-action="increase"]');
+      if (incBtn) {
+        incBtn.addEventListener('click', () => {
+          if (this.onUpdateQuantity) {
+            this.onUpdateQuantity(id, variant, currentQty + 1);
+          }
+        });
+      }
     });
   }
 
@@ -178,13 +183,16 @@ window.Khyber.CartView = class CartView {
       document.body.appendChild(modal);
     }
 
+    const shippingCost = state.isFreeShippingEligible ? 0 : 12;
+    const finalTotal = state.subtotal + shippingCost;
+
     modal.innerHTML = `
       <div class="checkout-modal-card">
         <button class="checkout-modal-close" id="checkout-modal-close">&times;</button>
         <div class="checkout-header">
           <span class="badge badge-accent">Secure Order Preview</span>
           <h3>Khyber Stores Checkout</h3>
-          <p>Order Summary (${state.count} items)</p>
+          <p>Order Summary (${state.count} item${state.count > 1 ? 's' : ''})</p>
         </div>
 
         <div class="checkout-summary-box">
@@ -198,7 +206,7 @@ window.Khyber.CartView = class CartView {
           </div>
           <div class="checkout-summary-row total">
             <span>Estimated Total</span>
-            <span>$${(state.subtotal + (state.isFreeShippingEligible ? 0 : 12)).toFixed(2)}</span>
+            <span>$${finalTotal.toFixed(2)}</span>
           </div>
         </div>
 
@@ -218,7 +226,7 @@ window.Khyber.CartView = class CartView {
             </div>
           </div>
           <button type="submit" class="btn btn-primary btn-block checkout-submit-btn">
-            Place Order &bull; $${(state.subtotal + (state.isFreeShippingEligible ? 0 : 12)).toFixed(2)}
+            Place Order &bull; $${finalTotal.toFixed(2)}
           </button>
         </form>
         <p class="checkout-guarantee">🔒 256-bit Encrypted Checkout &bull; 30-day Free Global Returns</p>
@@ -235,25 +243,64 @@ window.Khyber.CartView = class CartView {
 
     modal.querySelector('#checkout-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      const nameInput = modal.querySelector('#co-name');
+      const customerName = nameInput ? nameInput.value : 'Alex Morgan';
       const submitBtn = modal.querySelector('.checkout-submit-btn');
       submitBtn.textContent = 'Processing Order...';
       submitBtn.disabled = true;
 
+      const orderNumber = `${Math.floor(100000 + Math.random() * 900000)}`;
+
       setTimeout(() => {
-        modal.innerHTML = `
-          <div class="checkout-modal-card text-center success-card">
-            <div class="success-checkmark">✓</div>
-            <h3>Thank You for Your Order!</h3>
-            <p class="success-order-num">Confirmation #KHYBER-${Math.floor(100000 + Math.random() * 900000)}</p>
-            <p class="text-muted">A confirmation with dispatch details has been sent to your email. Your pieces are carefully packaged in recyclable linen wrap.</p>
-            <button class="btn btn-primary" id="success-done-btn">Back to Store</button>
-          </div>
-        `;
-        modal.querySelector('#success-done-btn').addEventListener('click', () => {
-          closeModal();
-          if (onComplete) onComplete();
-        });
-      }, 1200);
+        closeModal();
+        if (onComplete) onComplete();
+        // Display order success popup strictly at the top-right of the screen
+        this.showOrderSuccessPopup(orderNumber, customerName, finalTotal, state);
+      }, 900);
     });
+  }
+
+  showOrderSuccessPopup(orderId, customerName, total, state) {
+    // Remove existing if any
+    const existing = document.getElementById('order-success-popup');
+    if (existing) existing.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'order-success-popup';
+    popup.className = 'order-success-popup';
+    popup.innerHTML = `
+      <div class="osp-header">
+        <div class="osp-icon">✓</div>
+        <div class="osp-title-group">
+          <span class="osp-badge">Order Confirmed</span>
+          <h4 class="osp-title">Thank You, ${customerName}!</h4>
+        </div>
+        <button class="osp-close" id="osp-close-btn" aria-label="Close notification">&times;</button>
+      </div>
+      <div class="osp-body">
+        <p class="osp-num">Order ID: <strong>#KHYBER-${orderId}</strong></p>
+        <p class="osp-info">Total: <strong>$${total.toFixed(2)}</strong> &bull; ${state.count} piece${state.count > 1 ? 's' : ''}</p>
+        <p class="osp-sub">A receipt with tracking has been sent to your email. Packaged in recyclable linen wrap.</p>
+      </div>
+      <div class="osp-footer">
+        <button class="btn btn-primary btn-sm" id="osp-done-btn">Continue Shopping</button>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+    requestAnimationFrame(() => {
+      popup.classList.add('osp-visible');
+    });
+
+    const dismiss = () => {
+      popup.classList.remove('osp-visible');
+      setTimeout(() => popup.remove(), 350);
+    };
+
+    popup.querySelector('#osp-close-btn').addEventListener('click', dismiss);
+    popup.querySelector('#osp-done-btn').addEventListener('click', dismiss);
+
+    // Auto-dismiss after 8.5 seconds
+    setTimeout(dismiss, 8500);
   }
 };

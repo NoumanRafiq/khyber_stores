@@ -14,20 +14,56 @@
 </head>
 <body>
 
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar">
+    <div class="container announcement-inner">
+      <span>Complimentary express global delivery on orders over $150 &bull; Packaged in recyclable linen wrap</span>
+      <div class="currency-selector">
+        <select id="currency-select" aria-label="Select Currency">
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
   <!-- Sticky Site Header -->
   <header class="site-header">
     <div class="container nav-container">
       <a href="index.html" class="brand-logo" id="brand-logo-link">KHYBER</a>
 
+      <!-- Main Navigation Tabs -->
       <nav aria-label="Main Navigation">
         <ul class="nav-links">
-          <li><a href="index.html#catalog" class="nav-link">Collection</a></li>
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="shop.html" class="nav-link">Shop</a></li>
+          <li><a href="shop.html?category=New+Arrivals" class="nav-link">New Arrivals</a></li>
+          <li><a href="about.html" class="nav-link">Craft Ethos</a></li>
           <li><a href="blog.html" class="nav-link">Journal</a></li>
-          <li><a href="index.html#promise" class="nav-link">Craft Ethos</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
+        <!-- Search -->
+        <button class="nav-icon-btn" id="nav-search-trigger" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <!-- Wishlist Button -->
+        <button class="wishlist-toggle-btn" id="open-wishlist-btn" data-action="open-wishlist" aria-label="View wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="nav-btn-text">Saved</span>
+          <span class="wishlist-count-badge" style="display: none;">0</span>
+        </button>
+
+        <!-- Cart Button -->
         <button class="cart-toggle-btn" id="open-cart-btn" data-action="open-cart" aria-label="View shopping bag">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
@@ -37,9 +73,46 @@
           <span>Bag</span>
           <span class="cart-count-badge" style="display: none;">0</span>
         </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Expandable Search Bar -->
+    <div class="nav-search-bar" id="nav-search-bar">
+      <div class="container nav-search-inner">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search pieces, materials, categories..." aria-label="Search store" />
+        <button class="nav-search-close" id="nav-search-close" aria-label="Close search">&times;</button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <aside class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <div class="mobile-nav-header">
+      <span class="brand-logo">KHYBER</span>
+      <button class="mobile-nav-close" id="mobile-nav-close">&times;</button>
+    </div>
+    <ul class="mobile-nav-list">
+      <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+      <li><a href="shop.html" class="mobile-nav-link">Shop</a></li>
+      <li><a href="shop.html?category=New+Arrivals" class="mobile-nav-link">New Arrivals</a></li>
+      <li><a href="about.html" class="mobile-nav-link">Craft Ethos</a></li>
+      <li><a href="blog.html" class="mobile-nav-link">Journal</a></li>
+      <li><a href="contact.html" class="mobile-nav-link">Contact</a></li>
+    </ul>
+    <div class="mobile-nav-footer">
+      <p class="text-muted" style="font-size: var(--text-xs);">Handcrafted with intention &bull; European ateliers</p>
+    </div>
+  </aside>
 
   <main id="main-content">
     <!-- Breadcrumbs -->
@@ -58,7 +131,6 @@
     <!-- Product Detail Container (rendered dynamically via ProductDetailView) -->
     <div class="container">
       <div class="product-detail-layout" id="product-detail-container">
-        <!-- Injected by ProductDetailView -->
         <div style="padding: 4rem 0; text-align: center;">Loading product details...</div>
       </div>
     </div>
@@ -74,22 +146,12 @@
     </section>
   </main>
 
-  <!-- Slide-out Shopping Bag Drawer -->
+  <!-- Slide-out Shopping Bag Drawer (Progress bar removed as requested) -->
   <div class="cart-overlay" id="cart-overlay" aria-hidden="true"></div>
   <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping Bag">
     <div class="cart-drawer-header">
       <h3>Your Bag</h3>
       <button class="cart-drawer-close" id="cart-close-btn" aria-label="Close bag">&times;</button>
-    </div>
-
-    <!-- Free Shipping Progress -->
-    <div class="shipping-meter">
-      <p class="shipping-progress-text" id="shipping-progress-text">
-        Add <strong>$150.00</strong> more for complimentary shipping.
-      </p>
-      <div class="shipping-progress-track">
-        <div class="shipping-progress-fill" id="shipping-progress-bar" style="width: 0%;"></div>
-      </div>
     </div>
 
     <!-- Items List (rendered via CartView) -->
@@ -107,8 +169,20 @@
         Proceed to Checkout
       </button>
       <p class="text-center text-muted" style="font-size: var(--text-xs); margin-top: var(--space-3);">
-        Taxes and duties calculated at step 2.
+        Taxes and duties calculated at checkout.
       </p>
+    </div>
+  </aside>
+
+  <!-- Slide-out Wishlist Drawer -->
+  <div class="cart-overlay" id="wishlist-overlay" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="wishlist-drawer" aria-label="Favorites List">
+    <div class="cart-drawer-header">
+      <h3>Your Favorites</h3>
+      <button class="cart-drawer-close" id="wishlist-close-btn" aria-label="Close wishlist">&times;</button>
+    </div>
+    <div class="cart-items-container" id="wishlist-items-container">
+      <!-- Injected by WishlistView -->
     </div>
   </aside>
 
@@ -124,18 +198,21 @@
         <div class="footer-col">
           <h5>Explore</h5>
           <ul class="footer-menu">
+            <li><a href="index.html">Home</a></li>
             <li><a href="index.html#catalog">All Collections</a></li>
+            <li><a href="about.html">Craft Ethos</a></li>
             <li><a href="blog.html">Editorial Journal</a></li>
-            <li><a href="index.html#promise">Craft Ethos</a></li>
+            <li><a href="contact.html">Studio Concierge</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h5>Client Service</h5>
+          <h5>Client Care</h5>
           <ul class="footer-menu">
-            <li><a href="javascript:void(0)" data-action="open-cart">View Bag</a></li>
-            <li><a href="index.html#promise">Shipping & Returns</a></li>
-            <li><a href="mailto:hello@khyber.store">Contact Studio</a></li>
+            <li><a href="javascript:void(0)" data-action="open-cart">Shopping Bag</a></li>
+            <li><a href="javascript:void(0)" data-action="open-wishlist">Saved Favorites</a></li>
+            <li><a href="contact.html#faq">Shipping &amp; Returns</a></li>
+            <li><a href="contact.html">Bespoke Inquiries</a></li>
           </ul>
         </div>
 
@@ -160,10 +237,15 @@
   <script src="js/data/products.js"></script>
   <script src="js/models/ProductModel.js"></script>
   <script src="js/models/CartModel.js"></script>
+  <script src="js/models/WishlistModel.js"></script>
+  <script src="js/models/CurrencyModel.js"></script>
   <script src="js/views/ToastView.js"></script>
   <script src="js/views/CartView.js"></script>
+  <script src="js/views/WishlistView.js"></script>
   <script src="js/views/ProductDetailView.js"></script>
   <script src="js/controllers/CartController.js"></script>
+  <script src="js/controllers/WishlistController.js"></script>
   <script src="js/controllers/ProductController.js"></script>
+  <script src="js/nav.js"></script>
 </body>
 </html>

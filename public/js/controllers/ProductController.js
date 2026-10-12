@@ -1,6 +1,6 @@
 /**
  * ProductController
- * Drives product.html single product view, variant selection, and cart actions.
+ * Drives product.html single product view, variant selection, cart, and wishlist.
  */
 window.Khyber = window.Khyber || {};
 
@@ -9,6 +9,7 @@ window.Khyber.ProductController = class ProductController {
     this.model = new window.Khyber.ProductModel();
     this.view = new window.Khyber.ProductDetailView();
     this.cartController = new window.Khyber.CartController();
+    this.wishlistController = new window.Khyber.WishlistController(this.cartController);
 
     this.init();
   }
@@ -26,11 +27,17 @@ window.Khyber.ProductController = class ProductController {
     }
 
     const related = this.model.getRelated(product.id, 3);
-    this.view.render(product, related);
+    const isWishlisted = this.wishlistController.model.has(product.id);
+    this.view.render(product, related, isWishlisted);
 
     // Bind Add to Cart
     this.view.onAddToCart = (prod, quantity, variant) => {
       this.cartController.addToCart(prod, quantity, variant);
+    };
+
+    // Bind Wishlist
+    this.view.onToggleWishlist = (prod) => {
+      return this.wishlistController.toggle(prod);
     };
   }
 

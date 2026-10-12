@@ -33,14 +33,13 @@ window.Khyber.CartModel = class CartModel {
         localStorage.setItem(CartModel.STORAGE_KEY, JSON.stringify(this.items));
       }
     } catch (e) {
-      // Graceful fallback for sandboxed file:// origins
+      // Graceful fallback for sandboxed origins
     }
   }
 
   subscribe(listener) {
     if (typeof listener === 'function') {
       this.listeners.push(listener);
-      // Immediately notify current state
       listener(this.getState());
     }
     return () => {
@@ -62,8 +61,10 @@ window.Khyber.CartModel = class CartModel {
       item => item.product.id === product.id && item.variant === variantName
     );
 
+    const safeQty = Math.max(1, parseInt(quantity, 10) || 1);
+
     if (existingIndex > -1) {
-      this.items[existingIndex].quantity += quantity;
+      this.items[existingIndex].quantity += safeQty;
     } else {
       this.items.push({
         product: {
@@ -74,7 +75,7 @@ window.Khyber.CartModel = class CartModel {
           category: product.category
         },
         variant: variantName,
-        quantity: Math.max(1, quantity)
+        quantity: safeQty
       });
     }
 
@@ -88,12 +89,10 @@ window.Khyber.CartModel = class CartModel {
     );
     if (!target) return;
 
-    if (quantity <= 0) {
-      this.removeItem(productId, variantName);
-    } else {
-      target.quantity = quantity;
-      this.notify();
-    }
+    // Strict constraint: Quantity in cart cannot be less than 1!
+    const newQty = Math.max(1, parseInt(quantity, 10) || 1);
+    target.quantity = newQty;
+    this.notify();
   }
 
   removeItem(productId, variantName) {

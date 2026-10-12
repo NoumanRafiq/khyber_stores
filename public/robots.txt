@@ -1,0 +1,6 @@
+# robots.txt for Khyber Stores
+User-agent: *
+Allow: /
+
+# Sitemap Index
+Sitemap: https://www.khyberstores.com/sitemap.xml
