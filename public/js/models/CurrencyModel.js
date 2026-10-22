@@ -20,7 +20,7 @@ window.Khyber.CurrencyModel = class CurrencyModel {
   }
 
   bindSelector() {
-    document.addEventListener('DOMContentLoaded', () => {
+    const bind = () => {
       const selects = document.querySelectorAll('#currency-select');
       selects.forEach(sel => {
         sel.value = this.current;
@@ -28,7 +28,13 @@ window.Khyber.CurrencyModel = class CurrencyModel {
           this.setCurrency(e.target.value);
         });
       });
-    });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bind);
+    } else {
+      bind();
+    }
   }
 
   setCurrency(curr) {

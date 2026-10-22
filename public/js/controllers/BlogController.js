@@ -35,9 +35,15 @@ window.Khyber.BlogController = class BlogController {
   }
 };
 
-// Auto-boot on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+// Auto-boot reliably whether DOM is still loading or already parsed
+const bootBlogController = () => {
   if (document.getElementById('blog-grid-container')) {
     new window.Khyber.BlogController();
   }
-});
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootBlogController);
+} else {
+  bootBlogController();
+}

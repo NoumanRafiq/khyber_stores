@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap Index
-Sitemap: https://www.khyberstores.com/sitemap.xml
+Sitemap: https://khyberstores.com/sitemap.xml

@@ -233,19 +233,23 @@ window.Khyber.ProductDetailView = class ProductDetailView {
 
     // Quantity controls - Strictly minimum 1
     const updateQtyDisplay = () => {
-      if (qtyInput) qtyInput.value = this.currentQuantity;
-      if (addText) {
-        addText.textContent = `Add to Bag • $${(product.price * this.currentQuantity).toFixed(2)}`;
+      const currentQtyInput = document.getElementById('qty-input');
+      const currentAddText = document.getElementById('btn-add-text');
+      const currentQtyDec = document.getElementById('qty-decrease');
+
+      if (currentQtyInput) currentQtyInput.value = this.currentQuantity;
+      if (currentAddText) {
+        currentAddText.textContent = `Add to Bag • $${(product.price * this.currentQuantity).toFixed(2)}`;
       }
-      if (qtyDec) {
+      if (currentQtyDec) {
         if (this.currentQuantity <= 1) {
-          qtyDec.disabled = true;
-          qtyDec.style.opacity = '0.35';
-          qtyDec.style.cursor = 'not-allowed';
+          currentQtyDec.disabled = true;
+          currentQtyDec.style.opacity = '0.35';
+          currentQtyDec.style.cursor = 'not-allowed';
         } else {
-          qtyDec.disabled = false;
-          qtyDec.style.opacity = '1';
-          qtyDec.style.cursor = 'pointer';
+          currentQtyDec.disabled = false;
+          currentQtyDec.style.opacity = '1';
+          currentQtyDec.style.cursor = 'pointer';
         }
       }
     };
@@ -272,11 +276,12 @@ window.Khyber.ProductDetailView = class ProductDetailView {
     if (addBtn) {
       addBtn.addEventListener('click', () => {
         addBtn.disabled = true;
-        const originalHtml = addBtn.innerHTML;
-        addBtn.innerHTML = `<span>Adding...</span>`;
+        const textSpan = addBtn.querySelector('#btn-add-text') || addBtn.querySelector('span');
+        const originalText = textSpan ? textSpan.textContent : 'Add to Bag';
+        if (textSpan) textSpan.textContent = 'Adding...';
 
         setTimeout(() => {
-          addBtn.innerHTML = `<span>Added to Bag ✓</span>`;
+          if (textSpan) textSpan.textContent = 'Added to Bag ✓';
           addBtn.classList.add('btn-success-state');
 
           if (this.onAddToCart) {
@@ -284,12 +289,11 @@ window.Khyber.ProductDetailView = class ProductDetailView {
           }
 
           setTimeout(() => {
-            addBtn.innerHTML = originalHtml;
             addBtn.disabled = false;
             addBtn.classList.remove('btn-success-state');
             updateQtyDisplay();
           }, 1400);
-        }, 350);
+        }, 200);
       });
     }
 

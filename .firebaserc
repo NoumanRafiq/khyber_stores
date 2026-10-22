@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "khyber-stores"
-  }
+    "default": "khyber-stores-b6c54"
+  },
+  "targets": {},
+  "etags": {}
 }

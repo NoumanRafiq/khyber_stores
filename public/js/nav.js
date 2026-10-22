@@ -108,10 +108,16 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  const bootNav = () => {
     setActiveNav();
     initStickyHeader();
     initMobileNav();
     initSearchToggle();
-  });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootNav);
+  } else {
+    bootNav();
+  }
 })();

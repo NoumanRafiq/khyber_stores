@@ -28,9 +28,8 @@ window.Khyber.ProductController = class ProductController {
 
     const related = this.model.getRelated(product.id, 3);
     const isWishlisted = this.wishlistController.model.has(product.id);
-    this.view.render(product, related, isWishlisted);
 
-    // Bind Add to Cart
+    // Bind Add to Cart before render
     this.view.onAddToCart = (prod, quantity, variant) => {
       this.cartController.addToCart(prod, quantity, variant);
     };
@@ -39,6 +38,8 @@ window.Khyber.ProductController = class ProductController {
     this.view.onToggleWishlist = (prod) => {
       return this.wishlistController.toggle(prod);
     };
+
+    this.view.render(product, related, isWishlisted);
   }
 
   renderNotFound() {
@@ -48,16 +49,22 @@ window.Khyber.ProductController = class ProductController {
         <div class="product-not-found text-center" style="padding: 4rem 0;">
           <h2>Piece Not Found</h2>
           <p class="text-muted" style="margin: 1rem 0 2rem;">The requested object is no longer in our archive or has moved.</p>
-          <a href="index.html#catalog" class="btn btn-primary">Return to Collection</a>
+          <a href="shop.html" class="btn btn-primary">Return to Collection</a>
         </div>
       `;
     }
   }
 };
 
-// Auto-boot on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+// Auto-boot reliably whether DOM is still loading or already parsed
+const bootProductController = () => {
   if (document.getElementById('product-detail-container')) {
     new window.Khyber.ProductController();
   }
-});
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootProductController);
+} else {
+  bootProductController();
+}

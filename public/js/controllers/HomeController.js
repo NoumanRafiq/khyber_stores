@@ -58,7 +58,7 @@ window.Khyber.HomeController = class HomeController {
     this.view.onQuickAdd = (productId) => {
       const product = this.model.getById(productId);
       if (product) {
-        this.cartController.addToCart(product, 1, product.variants?.[0]?.name || null);
+        this.cartController.addToCart(product, 1, product.variants?.[0] || null);
       }
     };
 
@@ -114,9 +114,15 @@ window.Khyber.HomeController = class HomeController {
   }
 };
 
-// Auto-boot on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+// Auto-boot reliably whether DOM is still loading or already parsed
+const bootHomeController = () => {
   if (document.getElementById('products-grid')) {
     new window.Khyber.HomeController();
   }
-});
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootHomeController);
+} else {
+  bootHomeController();
+}

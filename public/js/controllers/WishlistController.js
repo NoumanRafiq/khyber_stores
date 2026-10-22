@@ -31,10 +31,19 @@ window.Khyber.WishlistController = class WishlistController {
     this.view.onMoveToBag = (id) => {
       const items = this.model.getItems();
       const product = items.find(p => p.id === id);
-      if (product && this.cartController) {
-        this.cartController.addToCart(product, 1);
-        this.model.remove(id);
-        this.view.close();
+      if (product) {
+        let fullProduct = product;
+        if (window.Khyber && Array.isArray(window.Khyber.products)) {
+          const matched = window.Khyber.products.find(p => p.id === id);
+          if (matched) fullProduct = matched;
+        }
+
+        const cartCtrl = this.cartController || window.Khyber.cartController;
+        if (cartCtrl) {
+          cartCtrl.addToCart(fullProduct, 1, fullProduct.variants?.[0] || null);
+          this.model.remove(id);
+          this.view.close();
+        }
       }
     };
   }

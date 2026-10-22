@@ -2,6 +2,16 @@
 <html lang="en">
 
 <head>
+  <link rel="canonical" href="https://khyberstores.com/index.html" />
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FJ7KMBQQKL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FJ7KMBQQKL');
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KHYBER — Curated Objects &amp; Artisan Lifestyle Goods</title>
@@ -285,20 +295,28 @@
 
   <!-- Firebase Analytics -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-analytics.js";
-    const firebaseConfig = {
-      apiKey: "AIzaSyC3zpU8NFxBLwiBgWzQ9bCuAiHXSYOv8qo",
-      authDomain: "khyber-stores.firebaseapp.com",
-      projectId: "khyber-stores",
-      storageBucket: "khyber-stores.firebasestorage.app",
-      messagingSenderId: "1009094476564",
-      appId: "1:1009094476564:web:911f50bdc31e6c73f6f801",
-      measurementId: "G-6XS7Y3Z7D3"
-    };
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-  </script>
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCLu7hukSIlq4198UbdQA0GBXEmJGcU44U",
+    authDomain: "khyber-stores-b6c54.firebaseapp.com",
+    projectId: "khyber-stores-b6c54",
+    storageBucket: "khyber-stores-b6c54.firebasestorage.app",
+    messagingSenderId: "175540713807",
+    appId: "1:175540713807:web:8dcaacbd2f276c090b6d3a",
+    measurementId: "G-1HPW6T5YVH"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 
   <!-- MVC Architecture Scripts -->
   <script src="js/data/products.js"></script>

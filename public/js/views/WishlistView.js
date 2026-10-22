@@ -42,10 +42,20 @@ window.Khyber.WishlistView = class WishlistView {
   }
 
   isOpen() {
-    return this.drawer && this.drawer.classList.contains('is-open');
+    const drawer = this.drawer || document.getElementById('wishlist-drawer');
+    return drawer && drawer.classList.contains('is-open');
   }
 
   open() {
+    this.drawer = this.drawer || document.getElementById('wishlist-drawer');
+    this.overlay = this.overlay || document.getElementById('wishlist-overlay');
+
+    // Close cart drawer if open
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartDrawer) cartDrawer.classList.remove('is-open');
+    if (cartOverlay) cartOverlay.classList.remove('is-open');
+
     if (this.drawer && this.overlay) {
       this.drawer.classList.add('is-open');
       this.overlay.classList.add('is-open');
@@ -54,6 +64,8 @@ window.Khyber.WishlistView = class WishlistView {
   }
 
   close() {
+    this.drawer = this.drawer || document.getElementById('wishlist-drawer');
+    this.overlay = this.overlay || document.getElementById('wishlist-overlay');
     if (this.drawer && this.overlay) {
       this.drawer.classList.remove('is-open');
       this.overlay.classList.remove('is-open');
@@ -64,8 +76,9 @@ window.Khyber.WishlistView = class WishlistView {
   render(items) {
     const count = items.length;
 
-    // Badges update
-    this.badgeElements.forEach(el => {
+    // Badges update dynamically
+    const badgeElements = document.querySelectorAll('.wishlist-count-badge');
+    badgeElements.forEach(el => {
       el.textContent = count;
       el.style.display = count > 0 ? 'inline-flex' : 'none';
     });

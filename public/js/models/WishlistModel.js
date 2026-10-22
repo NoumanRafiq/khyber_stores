@@ -17,23 +17,61 @@ window.Khyber.WishlistModel = class WishlistModel {
     try {
       if (typeof localStorage !== 'undefined') {
         const stored = localStorage.getItem(WishlistModel.STORAGE_KEY);
-        return stored ? JSON.parse(stored) : [];
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
       }
-    } catch (e) {
-      console.warn('LocalStorage unavailable for wishlist; using session backup.', e);
-    }
+    } catch (e) {}
+
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        const stored = sessionStorage.getItem(WishlistModel.STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof window !== 'undefined' && window.name) {
+        let nameData = {};
+        try { nameData = JSON.parse(window.name); } catch (_) {}
+        if (nameData && Array.isArray(nameData[WishlistModel.STORAGE_KEY]) && nameData[WishlistModel.STORAGE_KEY].length > 0) {
+          return nameData[WishlistModel.STORAGE_KEY];
+        }
+      }
+    } catch (e) {}
+
     return this.memoryBackup || [];
   }
 
   saveToStorage() {
     this.memoryBackup = this.items;
+    const json = JSON.stringify(this.items);
+
     try {
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(WishlistModel.STORAGE_KEY, JSON.stringify(this.items));
+        localStorage.setItem(WishlistModel.STORAGE_KEY, json);
       }
-    } catch (e) {
-      // fallback
-    }
+    } catch (e) {}
+
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem(WishlistModel.STORAGE_KEY, json);
+      }
+    } catch (e) {}
+
+    try {
+      if (typeof window !== 'undefined') {
+        let nameData = {};
+        try { nameData = JSON.parse(window.name); } catch (_) {}
+        if (typeof nameData !== 'object' || nameData === null) nameData = {};
+        nameData[WishlistModel.STORAGE_KEY] = this.items;
+        window.name = JSON.stringify(nameData);
+      }
+    } catch (e) {}
   }
 
   subscribe(listener) {
@@ -76,7 +114,8 @@ window.Khyber.WishlistModel = class WishlistModel {
         price: product.price,
         image: product.image,
         category: product.category,
-        tagline: product.tagline || ''
+        tagline: product.tagline || '',
+        variants: product.variants || []
       });
     }
     this.notify();

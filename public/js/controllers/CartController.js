@@ -10,6 +10,8 @@ window.Khyber.CartController = class CartController {
     this.view = new window.Khyber.CartView();
     this.toast = new window.Khyber.ToastView();
 
+    window.Khyber.cartController = this;
+
     this.init();
   }
 
@@ -52,17 +54,28 @@ window.Khyber.CartController = class CartController {
   }
 
   addToCart(product, quantity = 1, variant = null) {
-    const success = this.model.addItem(product, quantity, variant);
+    if (!product) return false;
+    const safeQty = Math.max(1, parseInt(quantity, 10) || 1);
+    const success = this.model.addItem(product, safeQty, variant);
     if (success) {
-      const variantName = variant ? variant.name : (product.variants?.[0]?.name || '');
+      const variantName = window.Khyber.CartModel.getVariantName(variant, product);
+      const variantLabel = variantName && variantName !== 'Standard' ? ` (${variantName})` : '';
       this.toast.show({
         title: 'Added to Bag',
-        message: `${quantity}× ${product.name} ${variantName ? `(${variantName})` : ''}`,
-        image: product.image,
+        message: `${safeQty}× ${product.name}${variantLabel}`,
+        image: product.image || (Array.isArray(product.images) ? product.images[0] : null),
         type: 'success',
         duration: 3200
       });
       this.view.open();
     }
+    return success;
   }
+};
+
+window.Khyber.addToCart = (product, quantity, variant) => {
+  if (window.Khyber.cartController) {
+    return window.Khyber.cartController.addToCart(product, quantity, variant);
+  }
+  return false;
 };

@@ -53,10 +53,20 @@ window.Khyber.CartView = class CartView {
   }
 
   isOpen() {
-    return this.drawer && this.drawer.classList.contains('is-open');
+    const drawer = this.drawer || document.getElementById('cart-drawer');
+    return drawer && drawer.classList.contains('is-open');
   }
 
   open() {
+    this.drawer = this.drawer || document.getElementById('cart-drawer');
+    this.overlay = this.overlay || document.getElementById('cart-overlay');
+
+    // Close wishlist drawer if open to prevent overlay stacking conflicts
+    const wishlistDrawer = document.getElementById('wishlist-drawer');
+    const wishlistOverlay = document.getElementById('wishlist-overlay');
+    if (wishlistDrawer) wishlistDrawer.classList.remove('is-open');
+    if (wishlistOverlay) wishlistOverlay.classList.remove('is-open');
+
     if (this.drawer && this.overlay) {
       this.drawer.classList.add('is-open');
       this.overlay.classList.add('is-open');
@@ -65,6 +75,8 @@ window.Khyber.CartView = class CartView {
   }
 
   close() {
+    this.drawer = this.drawer || document.getElementById('cart-drawer');
+    this.overlay = this.overlay || document.getElementById('cart-overlay');
     if (this.drawer && this.overlay) {
       this.drawer.classList.remove('is-open');
       this.overlay.classList.remove('is-open');
@@ -75,23 +87,27 @@ window.Khyber.CartView = class CartView {
   render(state) {
     const { items, count, formattedSubtotal } = state;
 
-    // Update count badges
-    this.badgeElements.forEach(el => {
+    // Dynamically query count badges across current DOM
+    const badgeElements = document.querySelectorAll('.cart-count-badge');
+    badgeElements.forEach(el => {
       el.textContent = count;
       el.style.display = count > 0 ? 'inline-flex' : 'none';
     });
 
     // Update Subtotal
+    this.subtotalElement = this.subtotalElement || document.getElementById('cart-subtotal');
     if (this.subtotalElement) {
       this.subtotalElement.textContent = formattedSubtotal;
     }
 
     // Enable/disable checkout button
+    this.checkoutBtn = this.checkoutBtn || document.getElementById('cart-checkout-btn');
     if (this.checkoutBtn) {
       this.checkoutBtn.disabled = items.length === 0;
     }
 
     // Render items list
+    this.itemsContainer = this.itemsContainer || document.getElementById('cart-items-container');
     if (!this.itemsContainer) return;
 
     if (items.length === 0) {
@@ -106,7 +122,7 @@ window.Khyber.CartView = class CartView {
           </div>
           <p class="cart-empty-title">Your shopping bag is empty</p>
           <p class="cart-empty-sub">Discover thoughtfully crafted objects for your everyday living.</p>
-          <a href="index.html#catalog" class="btn btn-secondary btn-sm" onclick="document.getElementById('cart-drawer')?.classList.remove('is-open'); document.getElementById('cart-overlay')?.classList.remove('is-open');">
+          <a href="shop.html" class="btn btn-secondary btn-sm" onclick="document.getElementById('cart-drawer')?.classList.remove('is-open'); document.getElementById('cart-overlay')?.classList.remove('is-open');">
             Explore Collection
           </a>
         </div>
@@ -114,46 +130,55 @@ window.Khyber.CartView = class CartView {
       return;
     }
 
-    this.itemsContainer.innerHTML = items.map(item => `
-      <div class="cart-item" data-id="${item.product.id}" data-variant="${item.variant}">
-        <a href="product.html?id=${item.product.id}" class="cart-item-img-link">
-          <img src="${item.product.image}" alt="${item.product.name}" class="cart-item-img" />
-        </a>
-        <div class="cart-item-info">
-          <div class="cart-item-header">
-            <a href="product.html?id=${item.product.id}" class="cart-item-name">${item.product.name}</a>
-            <button class="cart-item-remove" data-action="remove" aria-label="Remove item">&times;</button>
-          </div>
-          <div class="cart-item-variant">${item.variant}</div>
-          <div class="cart-item-footer">
-            <div class="cart-qty-control">
-              <button 
-                class="cart-qty-btn" 
-                data-action="decrease" 
-                aria-label="Decrease quantity"
-                ${item.quantity <= 1 ? 'disabled style="opacity: 0.35; cursor: not-allowed;"' : ''}>
-                &minus;
-              </button>
-              <span class="cart-qty-val">${item.quantity}</span>
-              <button class="cart-qty-btn" data-action="increase" aria-label="Increase quantity">&plus;</button>
+    this.itemsContainer.innerHTML = items.map(item => {
+      const variantName = (item.variant || 'Standard').trim();
+      const variantDisplay = variantName && variantName !== 'Standard' ? `<div class="cart-item-variant">${variantName}</div>` : '';
+      const unitPrice = typeof item.product?.price === 'number' ? item.product.price : parseFloat(item.product?.price) || 0;
+      const itemTotal = (unitPrice * item.quantity).toFixed(2);
+
+      return `
+        <div class="cart-item" data-id="${item.product.id}" data-variant="${variantName}">
+          <a href="product.html?id=${item.product.id}" class="cart-item-img-link">
+            <img src="${item.product.image}" alt="${item.product.name}" class="cart-item-img" />
+          </a>
+          <div class="cart-item-info">
+            <div class="cart-item-header">
+              <a href="product.html?id=${item.product.id}" class="cart-item-name">${item.product.name}</a>
+              <button class="cart-item-remove" data-action="remove" aria-label="Remove item">&times;</button>
             </div>
-            <div class="cart-item-price">$${(item.product.price * item.quantity).toFixed(2)}</div>
+            ${variantDisplay}
+            <div class="cart-item-footer">
+              <div class="cart-qty-control">
+                <button 
+                  class="cart-qty-btn" 
+                  data-action="decrease" 
+                  aria-label="Decrease quantity"
+                  ${item.quantity <= 1 ? 'disabled style="opacity: 0.35; cursor: not-allowed;"' : ''}>
+                  &minus;
+                </button>
+                <span class="cart-qty-val">${item.quantity}</span>
+                <button class="cart-qty-btn" data-action="increase" aria-label="Increase quantity">&plus;</button>
+              </div>
+              <div class="cart-item-price">$${itemTotal}</div>
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     // Attach listeners for remove and quantity updates
     this.itemsContainer.querySelectorAll('.cart-item').forEach(card => {
       const id = card.dataset.id;
-      const variant = card.dataset.variant;
-      const currentQty = parseInt(card.querySelector('.cart-qty-val').textContent, 10);
+      const variant = card.dataset.variant || 'Standard';
+      const currentQty = parseInt(card.querySelector('.cart-qty-val')?.textContent || '1', 10);
 
-      card.querySelector('[data-action="remove"]').addEventListener('click', () => {
-        if (this.onRemoveItem) this.onRemoveItem(id, variant);
-      });
+      const removeBtn = card.querySelector('[data-action="remove"]');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+          if (this.onRemoveItem) this.onRemoveItem(id, variant);
+        });
+      }
 
-      // Quantity cannot be less than 1
       const decBtn = card.querySelector('[data-action="decrease"]');
       if (decBtn) {
         decBtn.addEventListener('click', () => {
